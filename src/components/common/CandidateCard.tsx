@@ -1,4 +1,3 @@
-import { Link } from "@tanstack/react-router";
 import type { Candidato } from "@/types";
 import { Avatar } from "./Avatar";
 import { Badge } from "./Badge";
@@ -7,7 +6,7 @@ import { MapPin } from "lucide-react";
 
 export function CandidateCard({ candidato }: { candidato: Candidato }) {
   return (
-    <Link to="/talentos/$id" params={{ id: candidato.id }} className="tm-kanban-card">
+    <div className="tm-kanban-card">
       <div className="tm-flex tm-gap-3 tm-items-center" style={{ marginBottom: 8 }}>
         <Avatar nome={candidato.nome} foto={candidato.foto} tamanho="md" />
         <div style={{ minWidth: 0, flex: 1 }}>
@@ -19,6 +18,6 @@ export function CandidateCard({ candidato }: { candidato: Candidato }) {
         <Badge variant="primary">{senioridadeLabel[candidato.senioridade]}</Badge>
         <span className="tm-muted tm-flex tm-items-center tm-gap-1"><MapPin size={11} />{candidato.cidade}</span>
       </div>
-    </Link>
+    </div>
   );
 }

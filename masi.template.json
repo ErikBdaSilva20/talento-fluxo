@@ -1,0 +1,45 @@
+{
+  "id": "talento-fluxo",
+  "name": "Gestor de Talentos e R&S",
+  "description": "ATS multi-tenant para gestão de candidatos, pipeline Kanban, entrevistas e avaliações.",
+  "version": "1.0.0",
+  "engine": "vite-react-gateway",
+  "schemaVersion": 1,
+  "migrations": ["0001_business_schema.sql"],
+  "auth": { "provider": "better-auth", "roles": ["admin", "manager", "rep"] },
+  "screens": [
+    { "id": "dashboard", "route": "/", "title": "Dashboard", "file": "src/routes/index" },
+    { "id": "talentos", "route": "/talentos", "title": "Banco de Talentos", "file": "src/routes/talentos" },
+    { "id": "pipeline", "route": "/pipeline", "title": "Pipeline", "file": "src/routes/pipeline" },
+    { "id": "entrevistas", "route": "/entrevistas", "title": "Entrevistas", "file": "src/routes/entrevistas" },
+    { "id": "recrutadores", "route": "/recrutadores", "title": "Recrutadores", "file": "src/routes/recrutadores" },
+    { "id": "avaliacoes", "route": "/avaliacoes", "title": "Avaliações", "file": "src/routes/avaliacoes" },
+    { "id": "relatorios", "route": "/relatorios", "title": "Relatórios", "file": "src/routes/relatorios" }
+  ],
+  "editable": {
+    "allow": [
+      "src/routes/**",
+      "src/components/common/**",
+      "src/components/layout/**",
+      "src/lib/data/*.repo.ts",
+      "src/lib/auth.tsx",
+      "src/utils/format.ts",
+      "src/styles.css"
+    ],
+    "protect": [
+      "src/lib/data/client.ts",
+      "src/lib/data/types.gen.ts",
+      "src/lib/data/preview-fixtures.ts",
+      "src/components/ui/**",
+      "src/components/registry.tsx",
+      "src/lib/utils.ts",
+      "src/main.tsx",
+      "src/App.tsx",
+      "vite.config.ts",
+      "components.json",
+      "supabase/migrations/**"
+    ]
+  },
+  "composio": { "toolkits": [] },
+  "envContract": ["VITE_GATEWAY_URL"]
+}
