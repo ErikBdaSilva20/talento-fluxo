@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Users, CalendarDays, Briefcase, UserCheck, UserPlus } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, LineChart, Line } from "recharts";
 import { dashboard } from "@/data/dashboard";
-import { StatsCard } from "@/components/ui/StatsCard";
-import { Timeline } from "@/components/ui/Timeline";
+import { StatsCard } from "@/components/common/StatsCard";
+import { Timeline } from "@/components/common/Timeline";
 
 export const Route = createFileRoute("/")({
   head: () => ({

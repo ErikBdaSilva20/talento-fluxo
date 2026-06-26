@@ -2,10 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { tags as data } from "@/data/tags";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
-import { Modal } from "@/components/ui/Modal";
-import { Field, Input, Select } from "@/components/ui/Input";
+import { Badge } from "@/components/common/Badge";
+import { Button } from "@/components/common/Button";
+import { Modal } from "@/components/common/Modal";
+import { Field, Input, Select } from "@/components/common/Input";
 
 export const Route = createFileRoute("/tags")({
   head: () => ({

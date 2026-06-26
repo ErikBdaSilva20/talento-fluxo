@@ -1,5 +1,5 @@
 import { Bell, Menu, Plus, Search } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/common/Button";
 
 export function Header({ onAbrirSidebar }: { onAbrirSidebar: () => void }) {
   return (

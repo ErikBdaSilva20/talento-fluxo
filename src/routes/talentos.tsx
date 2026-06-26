@@ -3,14 +3,14 @@ import { useMemo, useState } from "react";
 import { ArrowUpDown, Plus, SlidersHorizontal } from "lucide-react";
 import { candidatos as allCandidatos } from "@/data/candidatos";
 import { statusLabel, statusVariant, senioridadeLabel } from "@/data/pipeline";
-import { SearchBar } from "@/components/ui/SearchBar";
-import { Select } from "@/components/ui/Input";
-import { Badge } from "@/components/ui/Badge";
-import { Avatar } from "@/components/ui/Avatar";
-import { Button } from "@/components/ui/Button";
-import { Pagination } from "@/components/ui/Pagination";
+import { SearchBar } from "@/components/common/SearchBar";
+import { Select } from "@/components/common/Input";
+import { Badge } from "@/components/common/Badge";
+import { Avatar } from "@/components/common/Avatar";
+import { Button } from "@/components/common/Button";
+import { Pagination } from "@/components/common/Pagination";
 import { formatarMoeda, tempoRelativo } from "@/utils/format";
-import { EmptyState } from "@/components/ui/EmptyState";
+import { EmptyState } from "@/components/common/EmptyState";
 
 export const Route = createFileRoute("/talentos")({
   head: () => ({

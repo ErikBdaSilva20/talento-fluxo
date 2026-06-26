@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Building2, Users, Workflow, Tag, Palette, Bell } from "lucide-react";
-import { Field, Input, Textarea, Select } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
+import { Field, Input, Textarea, Select } from "@/components/common/Input";
+import { Button } from "@/components/common/Button";
+import { Badge } from "@/components/common/Badge";
 import { pipelineStages, statusLabel } from "@/data/pipeline";
 import { recrutadores } from "@/data/recrutadores";
 import { tags } from "@/data/tags";
-import { Avatar } from "@/components/ui/Avatar";
+import { Avatar } from "@/components/common/Avatar";
 
 export const Route = createFileRoute("/configuracoes")({
   head: () => ({

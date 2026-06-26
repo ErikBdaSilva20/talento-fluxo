@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { GripVertical, Plus } from "lucide-react";
 import { pipelineStages, statusLabel } from "@/data/pipeline";
 import { candidatos } from "@/data/candidatos";
-import { CandidateCard } from "@/components/ui/CandidateCard";
-import { Button } from "@/components/ui/Button";
+import { CandidateCard } from "@/components/common/CandidateCard";
+import { Button } from "@/components/common/Button";
 
 export const Route = createFileRoute("/pipeline")({
   head: () => ({

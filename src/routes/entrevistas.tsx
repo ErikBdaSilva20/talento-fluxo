@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Plus, ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { entrevistas, tipoEntrevistaLabel, statusEntrevistaLabel } from "@/data/entrevistas";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/common/Badge";
+import { Button } from "@/components/common/Button";
 import { formatarData } from "@/utils/format";
 
 export const Route = createFileRoute("/entrevistas")({

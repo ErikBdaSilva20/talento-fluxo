@@ -7,11 +7,11 @@ import {
 import { candidatos } from "@/data/candidatos";
 import { avaliacoes } from "@/data/avaliacoes";
 import { statusLabel, statusVariant, senioridadeLabel } from "@/data/pipeline";
-import { Avatar } from "@/components/ui/Avatar";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
-import { Timeline } from "@/components/ui/Timeline";
-import { Textarea } from "@/components/ui/Input";
+import { Avatar } from "@/components/common/Avatar";
+import { Badge } from "@/components/common/Badge";
+import { Button } from "@/components/common/Button";
+import { Timeline } from "@/components/common/Timeline";
+import { Textarea } from "@/components/common/Input";
 import { formatarMoeda, formatarData, tempoRelativo } from "@/utils/format";
 
 export const Route = createFileRoute("/talentos/$id")({
