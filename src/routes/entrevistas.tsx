@@ -151,7 +151,7 @@ export default function EntrevistasPage() {
         </div>
       </div>
 
-      <div className="tm-grid" style={{ gridTemplateColumns: "1fr 320px", gap: 16 }}>
+      <div className="tm-grid-interview">
         <div className="tm-table-wrap">
           <table className="tm-table">
             <thead>
@@ -179,7 +179,7 @@ export default function EntrevistasPage() {
           </table>
         </div>
 
-        <div className="tm-card tm-card-pad" style={{ alignSelf: "flex-start" }}>
+        <div className="tm-card tm-card-pad">
           <div className="tm-flex tm-items-center tm-justify-between" style={{ marginBottom: 12 }}>
             <Button variant="ghost" iconOnly icon={<ChevronLeft size={16} />} onClick={() => setRefDate(addMonths(refDate, -1))} />
             <strong style={{ textTransform: "capitalize" }}>
