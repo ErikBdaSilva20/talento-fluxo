@@ -9,38 +9,214 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TalentosRouteImport } from './routes/talentos'
+import { Route as TagsRouteImport } from './routes/tags'
+import { Route as RelatoriosRouteImport } from './routes/relatorios'
+import { Route as RecrutadoresRouteImport } from './routes/recrutadores'
+import { Route as PipelineRouteImport } from './routes/pipeline'
+import { Route as EntrevistasRouteImport } from './routes/entrevistas'
+import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
+import { Route as AvaliacoesRouteImport } from './routes/avaliacoes'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TalentosIdRouteImport } from './routes/talentos.$id'
 
+const TalentosRoute = TalentosRouteImport.update({
+  id: '/talentos',
+  path: '/talentos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TagsRoute = TagsRouteImport.update({
+  id: '/tags',
+  path: '/tags',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RelatoriosRoute = RelatoriosRouteImport.update({
+  id: '/relatorios',
+  path: '/relatorios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecrutadoresRoute = RecrutadoresRouteImport.update({
+  id: '/recrutadores',
+  path: '/recrutadores',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PipelineRoute = PipelineRouteImport.update({
+  id: '/pipeline',
+  path: '/pipeline',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntrevistasRoute = EntrevistasRouteImport.update({
+  id: '/entrevistas',
+  path: '/entrevistas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AvaliacoesRoute = AvaliacoesRouteImport.update({
+  id: '/avaliacoes',
+  path: '/avaliacoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TalentosIdRoute = TalentosIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => TalentosRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/avaliacoes': typeof AvaliacoesRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/entrevistas': typeof EntrevistasRoute
+  '/pipeline': typeof PipelineRoute
+  '/recrutadores': typeof RecrutadoresRoute
+  '/relatorios': typeof RelatoriosRoute
+  '/tags': typeof TagsRoute
+  '/talentos': typeof TalentosRouteWithChildren
+  '/talentos/$id': typeof TalentosIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/avaliacoes': typeof AvaliacoesRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/entrevistas': typeof EntrevistasRoute
+  '/pipeline': typeof PipelineRoute
+  '/recrutadores': typeof RecrutadoresRoute
+  '/relatorios': typeof RelatoriosRoute
+  '/tags': typeof TagsRoute
+  '/talentos': typeof TalentosRouteWithChildren
+  '/talentos/$id': typeof TalentosIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/avaliacoes': typeof AvaliacoesRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/entrevistas': typeof EntrevistasRoute
+  '/pipeline': typeof PipelineRoute
+  '/recrutadores': typeof RecrutadoresRoute
+  '/relatorios': typeof RelatoriosRoute
+  '/tags': typeof TagsRoute
+  '/talentos': typeof TalentosRouteWithChildren
+  '/talentos/$id': typeof TalentosIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/avaliacoes'
+    | '/configuracoes'
+    | '/entrevistas'
+    | '/pipeline'
+    | '/recrutadores'
+    | '/relatorios'
+    | '/tags'
+    | '/talentos'
+    | '/talentos/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/avaliacoes'
+    | '/configuracoes'
+    | '/entrevistas'
+    | '/pipeline'
+    | '/recrutadores'
+    | '/relatorios'
+    | '/tags'
+    | '/talentos'
+    | '/talentos/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/avaliacoes'
+    | '/configuracoes'
+    | '/entrevistas'
+    | '/pipeline'
+    | '/recrutadores'
+    | '/relatorios'
+    | '/tags'
+    | '/talentos'
+    | '/talentos/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AvaliacoesRoute: typeof AvaliacoesRoute
+  ConfiguracoesRoute: typeof ConfiguracoesRoute
+  EntrevistasRoute: typeof EntrevistasRoute
+  PipelineRoute: typeof PipelineRoute
+  RecrutadoresRoute: typeof RecrutadoresRoute
+  RelatoriosRoute: typeof RelatoriosRoute
+  TagsRoute: typeof TagsRoute
+  TalentosRoute: typeof TalentosRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/talentos': {
+      id: '/talentos'
+      path: '/talentos'
+      fullPath: '/talentos'
+      preLoaderRoute: typeof TalentosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tags': {
+      id: '/tags'
+      path: '/tags'
+      fullPath: '/tags'
+      preLoaderRoute: typeof TagsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/relatorios': {
+      id: '/relatorios'
+      path: '/relatorios'
+      fullPath: '/relatorios'
+      preLoaderRoute: typeof RelatoriosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recrutadores': {
+      id: '/recrutadores'
+      path: '/recrutadores'
+      fullPath: '/recrutadores'
+      preLoaderRoute: typeof RecrutadoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pipeline': {
+      id: '/pipeline'
+      path: '/pipeline'
+      fullPath: '/pipeline'
+      preLoaderRoute: typeof PipelineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entrevistas': {
+      id: '/entrevistas'
+      path: '/entrevistas'
+      fullPath: '/entrevistas'
+      preLoaderRoute: typeof EntrevistasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/configuracoes': {
+      id: '/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/configuracoes'
+      preLoaderRoute: typeof ConfiguracoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/avaliacoes': {
+      id: '/avaliacoes'
+      path: '/avaliacoes'
+      fullPath: '/avaliacoes'
+      preLoaderRoute: typeof AvaliacoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +224,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/talentos/$id': {
+      id: '/talentos/$id'
+      path: '/$id'
+      fullPath: '/talentos/$id'
+      preLoaderRoute: typeof TalentosIdRouteImport
+      parentRoute: typeof TalentosRoute
+    }
   }
 }
 
+interface TalentosRouteChildren {
+  TalentosIdRoute: typeof TalentosIdRoute
+}
+
+const TalentosRouteChildren: TalentosRouteChildren = {
+  TalentosIdRoute: TalentosIdRoute,
+}
+
+const TalentosRouteWithChildren = TalentosRoute._addFileChildren(
+  TalentosRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AvaliacoesRoute: AvaliacoesRoute,
+  ConfiguracoesRoute: ConfiguracoesRoute,
+  EntrevistasRoute: EntrevistasRoute,
+  PipelineRoute: PipelineRoute,
+  RecrutadoresRoute: RecrutadoresRoute,
+  RelatoriosRoute: RelatoriosRoute,
+  TagsRoute: TagsRoute,
+  TalentosRoute: TalentosRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
