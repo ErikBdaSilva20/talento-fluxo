@@ -38,7 +38,7 @@ export const Route = createFileRoute("/talentos/$id")({
 type Tab = "dados" | "experiencia" | "skills" | "timeline" | "avaliacoes" | "documentos";
 
 function PerfilCandidato() {
-  const c = Route.useLoaderData();
+  const c = Route.useLoaderData() as import("@/types").Candidato;
   const [tab, setTab] = useState<Tab>("dados");
   const avals = avaliacoes.filter((a) => a.candidatoId === c.id);
 
