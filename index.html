@@ -16,7 +16,9 @@
   <body>
     <div id="root"></div>
     <script>
-      if (new URLSearchParams(location.search).has("preview")) {
+      // Preview mode sempre ativo por padrão (dados mockados)
+      // Desativar apenas se ?realdata estiver na URL (usa gateway real)
+      if (!new URLSearchParams(location.search).has("realdata")) {
         window.__MASI_PREVIEW__ = true;
       }
     </script>
