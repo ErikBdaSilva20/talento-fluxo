@@ -1,21 +1,22 @@
-import { useEffect, useMemo, useState } from "react";
-import { Plus, ChevronLeft, ChevronRight, Clock } from "lucide-react";
-import { listEntrevistas, createEntrevista, type Entrevista } from "@/lib/data/entrevistas.repo";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Plus, ChevronLeft, ChevronRight, Clock, CheckCircle2, XCircle, MoreHorizontal } from "lucide-react";
+import { listEntrevistas, createEntrevista, updateEntrevista, type Entrevista } from "@/lib/data/entrevistas.repo";
 import { listCandidatos, type Candidato } from "@/lib/data/candidatos.repo";
 import { Badge } from "@/components/common/Badge";
 import { Button } from "@/components/common/Button";
 import { Skeleton } from "@/components/common/Skeleton";
 import { Modal } from "@/components/common/Modal";
 import { Field, Input, Select } from "@/components/common/Input";
+import { hojeUTC3, agoraHorarioUTC3 } from "@/lib/utils";
 
 const tipoEntrevistaLabel: Record<string, string> = {
   rh: "RH", tecnica: "Técnica", cultural: "Cultural", gestor: "Gestor", final: "Final",
 };
 const statusEntrevistaLabel: Record<string, string> = {
-  agendada: "Agendada", realizada: "Realizada", cancelada: "Cancelada", remarcada: "Remarcada",
+  agendada: "Agendada", aprovado: "Aprovado", reprovado: "Reprovado", adiado: "Adiado",
 };
 const statusColor: Record<string, any> = {
-  agendada: "info", realizada: "success", cancelada: "danger", remarcada: "warning",
+  agendada: "info", aprovado: "success", reprovado: "danger", adiado: "warning",
 };
 
 function addMonths(date: Date, n: number) {
@@ -40,6 +41,84 @@ function formatarData(iso: string) {
   return new Date(iso).toLocaleDateString("pt-BR");
 }
 
+function AcaoPopover({ id, onAtualizar }: { id: string; onAtualizar: () => Promise<void> }) {
+  const [aberto, setAberto] = useState(false);
+  const [loading, setLoading] = useState<string | null>(null);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
+  const btnRef = useRef<HTMLButtonElement>(null);
+
+  function abrir() {
+    const rect = btnRef.current?.getBoundingClientRect();
+    if (rect) setPos({ top: rect.bottom + 6, left: rect.left });
+    setAberto(true);
+  }
+
+  async function acao(status: string) {
+    setLoading(status);
+    try {
+      await updateEntrevista(id, { status });
+      await onAtualizar();
+      setAberto(false);
+    } finally {
+      setLoading(null);
+    }
+  }
+
+  const opcoes = [
+    { status: "aprovado", label: "Aprovado", icon: <CheckCircle2 size={14} />, cor: "var(--color-success)" },
+    { status: "reprovado", label: "Reprovado", icon: <XCircle size={14} />, cor: "var(--color-destructive)" },
+    { status: "adiado", label: "Adiar", icon: <Clock size={14} />, cor: "var(--color-warning)" },
+  ];
+
+  return (
+    <>
+      <button
+        ref={btnRef}
+        onClick={abrir}
+        title="Ações"
+        style={{
+          display: "inline-flex", alignItems: "center", justifyContent: "center",
+          width: 28, height: 28, borderRadius: 6, border: "1px solid var(--color-border)",
+          background: "var(--color-card)", cursor: "pointer", color: "var(--color-muted-foreground)",
+        }}
+      >
+        <MoreHorizontal size={14} />
+      </button>
+
+      {aberto && (
+        <>
+          <div style={{ position: "fixed", inset: 0, zIndex: 49 }} onClick={() => setAberto(false)} />
+          <div style={{
+            position: "fixed", top: pos.top, left: pos.left, zIndex: 50,
+            background: "var(--color-card)", border: "1px solid var(--color-border)",
+            borderRadius: 10, boxShadow: "0 8px 24px rgba(0,0,0,.14)",
+            padding: 6, display: "flex", flexDirection: "column", gap: 2, minWidth: 140,
+          }}>
+            {opcoes.map((o) => (
+              <button
+                key={o.status}
+                disabled={loading !== null}
+                onClick={() => acao(o.status)}
+                style={{
+                  display: "flex", alignItems: "center", gap: 8,
+                  padding: "7px 10px", borderRadius: 7, border: "none",
+                  background: loading === o.status ? o.cor + "22" : "transparent",
+                  color: o.cor, cursor: "pointer", fontSize: 13, fontWeight: 500,
+                  opacity: loading !== null && loading !== o.status ? 0.45 : 1,
+                  textAlign: "left",
+                }}
+              >
+                {loading === o.status ? <Clock size={14} style={{ animation: "spin 1s linear infinite" }} /> : o.icon}
+                {loading === o.status ? "Salvando…" : o.label}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </>
+  );
+}
+
 export default function EntrevistasPage() {
   const [entrevistas, setEntrevistas] = useState<Entrevista[]>([]);
   const [candidatos, setCandidatos] = useState<Candidato[]>([]);
@@ -50,6 +129,7 @@ export default function EntrevistasPage() {
   const [diaSelecionado, setDiaSelecionado] = useState<string | null>(null);
   const [modalNova, setModalNova] = useState(false);
   const [salvando, setSalvando] = useState(false);
+  const [erroModal, setErroModal] = useState("");
   const [form, setForm] = useState({ candidato_id: "", candidato_nome: "", entrevistador: "", data: "", horario: "", tipo: "rh" });
 
   const dias = useMemo(() => buildMonth(refDate), [refDate]);
@@ -96,6 +176,9 @@ export default function EntrevistasPage() {
 
   async function handleSalvarNova() {
     if (!form.candidato_id || !form.entrevistador || !form.data || !form.horario) return;
+    if (form.data < hojeUTC3()) { setErroModal("Data no passado."); return; }
+    if (form.data === hojeUTC3() && form.horario < agoraHorarioUTC3()) { setErroModal("Horário já passou."); return; }
+    setErroModal("");
     setSalvando(true);
     try {
       await createEntrevista({
@@ -162,6 +245,7 @@ export default function EntrevistasPage() {
                 <th>Horário</th>
                 <th>Tipo</th>
                 <th>Status</th>
+                <th>Ação</th>
               </tr>
             </thead>
             <tbody>
@@ -173,6 +257,16 @@ export default function EntrevistasPage() {
                   <td><span className="tm-flex tm-items-center tm-gap-2"><Clock size={12} />{e.horario}</span></td>
                   <td><Badge variant="outline">{tipoEntrevistaLabel[e.tipo] ?? e.tipo}</Badge></td>
                   <td><Badge variant={statusColor[e.status]} dot>{statusEntrevistaLabel[e.status] ?? e.status}</Badge></td>
+                  <td>
+                    {e.status === "agendada" ? (
+                      <AcaoPopover
+                        id={e.id}
+                        onAtualizar={async () => setEntrevistas(await listEntrevistas())}
+                      />
+                    ) : (
+                      <span className="tm-muted" style={{ fontSize: 12 }}>—</span>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -254,8 +348,14 @@ export default function EntrevistasPage() {
             </Select>
           </Field>
           <Field label="Entrevistador *"><Input value={form.entrevistador} onChange={setForm_("entrevistador")} placeholder="Nome do entrevistador" /></Field>
-          <Field label="Data *"><Input type="date" value={form.data} onChange={setForm_("data")} /></Field>
-          <Field label="Horário *"><Input type="time" value={form.horario} onChange={setForm_("horario")} /></Field>
+          <Field label="Data *">
+            <Input type="date" value={form.data} onChange={setForm_("data")} min={hojeUTC3()} />
+          </Field>
+          <Field label="Horário *">
+            <Input type="time" value={form.horario} onChange={setForm_("horario")} min={form.data === hojeUTC3() ? agoraHorarioUTC3() : undefined} />
+          </Field>
+          <p style={{ fontSize: 12, color: "var(--color-warning)", margin: 0 }}>⚠ Horários em UTC-3 (Brasília)</p>
+          {erroModal && <p style={{ fontSize: 12, color: "var(--color-destructive)", margin: 0 }}>{erroModal}</p>}
           <Field label="Tipo">
             <Select value={form.tipo} onChange={setForm_("tipo")}>
               {Object.entries(tipoEntrevistaLabel).map(([k, v]) => <option key={k} value={k}>{v}</option>)}

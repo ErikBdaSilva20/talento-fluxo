@@ -52,7 +52,7 @@ export default function RelatoriosPage() {
       quantidade: candidatos.filter((c) => c.status === s.id).length,
     }));
     const contratacoesPorMes = agruparPorMes(contratados.map((c) => c.updated_at));
-    const entrevistasPorMes = agruparPorMes(entrevistas.map((e) => e.data));
+    const entrevistasPorMes = agruparPorMes(entrevistas.filter((e) => e.status === "aprovado").map((e) => e.data));
     const senioridadeGrp = groupBy(candidatos, (c) => c.senioridade ?? "desconhecido");
     const senioridadeData = Object.entries(senioridadeGrp).map(([nivel, quantidade]) => ({
       nivel: senioridadeLabel[nivel] ?? nivel, quantidade,
@@ -115,7 +115,7 @@ export default function RelatoriosPage() {
 
       <div className="tm-grid-2" style={{ marginBottom: 16 }}>
         <div className="tm-card tm-card-pad">
-          <h3 className="tm-h2" style={{ marginBottom: 12 }}>Entrevistas realizadas</h3>
+          <h3 className="tm-h2" style={{ marginBottom: 12 }}>Entrevistas aprovadas por mês</h3>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={dados.entrevistasPorMes}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />

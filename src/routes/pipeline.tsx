@@ -17,6 +17,7 @@ import { Badge } from "@/components/common/Badge";
 import { Button } from "@/components/common/Button";
 import { Skeleton } from "@/components/common/Skeleton";
 import { AddCandidateModal } from "@/components/common/AddCandidateModal";
+import { StatusBtn } from "@/components/common/StatusBtn";
 import { senioridadeLabel } from "@/data/pipeline";
 import { MapPin } from "lucide-react";
 
@@ -33,7 +34,7 @@ function DroppableCol({ id, children }: { id: string; children: React.ReactNode 
   );
 }
 
-function DraggableCard({ candidato }: { candidato: Candidato }) {
+function DraggableCard({ candidato, onStatusChange }: { candidato: Candidato; onStatusChange: () => void }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: candidato.id });
   return (
     <div
@@ -65,6 +66,14 @@ function DraggableCard({ candidato }: { candidato: Candidato }) {
           <span className="tm-muted tm-flex tm-items-center tm-gap-1"><MapPin size={11} />{candidato.cidade}</span>
         )}
       </div>
+      {candidato.status === "proposta" && (
+        <div onPointerDown={(e) => e.stopPropagation()} style={{ marginTop: 8, paddingTop: 8, borderTop: "1px solid var(--color-border)" }}>
+          <StatusBtn
+            onAprovar={async () => { await updateCandidato(candidato.id, { status: "contratado" }); onStatusChange(); }}
+            onReprovar={async () => { await updateCandidato(candidato.id, { status: "arquivado" }); onStatusChange(); }}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -84,6 +93,10 @@ export default function PipelinePage() {
       .catch(console.error)
       .finally(() => setCarregando(false));
   }, []);
+
+  async function recarregarCandidatos() {
+    listCandidatos().then(setCandidatos).catch(console.error);
+  }
 
   async function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
@@ -135,7 +148,7 @@ export default function PipelinePage() {
                   </div>
                 </div>
                 <div className="tm-flex tm-flex-col tm-gap-2">
-                  {cards.map((c) => <DraggableCard key={c.id} candidato={c} />)}
+                  {cards.map((c) => <DraggableCard key={c.id} candidato={c} onStatusChange={recarregarCandidatos} />)}
                   {cards.length === 0 && (
                     <div className="tm-muted" style={{ fontSize: 12, textAlign: "center", padding: "1rem", border: "1px dashed var(--color-border)", borderRadius: 8 }}>
                       Solte aqui

@@ -10,6 +10,7 @@ import { Button } from "@/components/common/Button";
 import { Skeleton } from "@/components/common/Skeleton";
 import { Modal } from "@/components/common/Modal";
 import { Field, Input, Select } from "@/components/common/Input";
+import { formatTelefone, isEmailValido } from "@/lib/utils";
 
 type FormData = { nome: string; cargo: string; email: string; telefone: string; status: string };
 const formVazio: FormData = { nome: "", cargo: "", email: "", telefone: "", status: "ativo" };
@@ -22,6 +23,7 @@ export default function RecrutadoresPage() {
   const [form, setForm] = useState<FormData>(formVazio);
   const [confirmExcluir, setConfirmExcluir] = useState<Recrutador | null>(null);
   const [salvando, setSalvando] = useState(false);
+  const [emailErro, setEmailErro] = useState("");
 
   useEffect(() => {
     listRecrutadores()
@@ -33,15 +35,26 @@ export default function RecrutadoresPage() {
   const set_ = (campo: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm((f) => ({ ...f, [campo]: e.target.value }));
 
-  function abrirNovo() { setEditando(null); setForm(formVazio); setModalForm(true); }
+  function handleEmail(e: React.ChangeEvent<HTMLInputElement>) {
+    const val = e.target.value;
+    setForm((f) => ({ ...f, email: val }));
+    setEmailErro(val && !isEmailValido(val) ? "E-mail inválido." : "");
+  }
+
+  function handleTelefone(e: React.ChangeEvent<HTMLInputElement>) {
+    setForm((f) => ({ ...f, telefone: formatTelefone(e.target.value) }));
+  }
+
+  function abrirNovo() { setEditando(null); setForm(formVazio); setEmailErro(""); setModalForm(true); }
   function abrirEditar(r: Recrutador) {
     setEditando(r);
     setForm({ nome: r.nome, cargo: r.cargo ?? "", email: r.email, telefone: r.telefone ?? "", status: r.status });
+    setEmailErro("");
     setModalForm(true);
   }
 
   async function handleSalvar() {
-    if (!form.nome || !form.email) return;
+    if (!form.nome || !form.email || !isEmailValido(form.email)) return;
     setSalvando(true);
     try {
       if (editando) {
@@ -121,7 +134,7 @@ export default function RecrutadoresPage() {
         acoes={
           <>
             <Button variant="secondary" onClick={() => setModalForm(false)} disabled={salvando}>Cancelar</Button>
-            <Button onClick={handleSalvar} disabled={salvando || !form.nome || !form.email}>
+            <Button onClick={handleSalvar} disabled={salvando || !form.nome || !form.email || !!emailErro || !isEmailValido(form.email)}>
               {salvando ? "Salvando…" : "Salvar"}
             </Button>
           </>
@@ -130,8 +143,11 @@ export default function RecrutadoresPage() {
         <div className="tm-flex tm-flex-col tm-gap-3">
           <Field label="Nome *"><Input value={form.nome} onChange={set_("nome")} placeholder="Ex.: Mariana Souza" /></Field>
           <Field label="Cargo"><Input value={form.cargo} onChange={set_("cargo")} placeholder="Ex.: Tech Recruiter Sênior" /></Field>
-          <Field label="Email *"><Input type="email" value={form.email} onChange={set_("email")} placeholder="email@masia.com" /></Field>
-          <Field label="Telefone"><Input value={form.telefone} onChange={set_("telefone")} placeholder="(11) 99999-9999" /></Field>
+          <Field label="Email *">
+            <Input type="email" value={form.email} onChange={handleEmail} placeholder="email@masia.com" />
+            {emailErro && <span style={{ color: "var(--color-destructive)", fontSize: 11, marginTop: 2 }}>{emailErro}</span>}
+          </Field>
+          <Field label="Telefone"><Input value={form.telefone} onChange={handleTelefone} placeholder="(11) 99999-9999" /></Field>
           <Field label="Status">
             <Select value={form.status} onChange={set_("status")}>
               <option value="ativo">Ativo</option>

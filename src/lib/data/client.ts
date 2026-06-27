@@ -2,7 +2,6 @@
 declare const window: Window & {
   __MASI_GW__?: string;
   __MASI_TENANT__?: string;
-  __MASI_PREVIEW__?: boolean;
 };
 
 const params = new URLSearchParams(typeof location !== "undefined" ? location.search : "");
@@ -11,13 +10,7 @@ const GW = window.__MASI_GW__ ?? params.get("gw") ?? import.meta.env.VITE_GATEWA
 
 const TENANT = window.__MASI_TENANT__ ?? params.get("t") ?? "";
 
-const IS_PREVIEW = !!window.__MASI_PREVIEW__;
-
 async function api<T>(method: string, path: string, body?: unknown): Promise<T> {
-  if (IS_PREVIEW) {
-    const { getFixture } = await import("./preview-fixtures");
-    return getFixture(method, path) as T;
-  }
   const res = await fetch(`${GW}${path}`, {
     method,
     credentials: "include",

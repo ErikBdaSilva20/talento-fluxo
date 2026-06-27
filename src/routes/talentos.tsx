@@ -39,7 +39,6 @@ export default function TalentosPage() {
   const [cidade, setCidade] = useState("todas");
   const [sort, setSort] = useState<SortKey>("updated_at");
   const [pagina, setPagina] = useState(1);
-  const [selecionados, setSelecionados] = useState<string[]>([]);
   const [modalAdicionar, setModalAdicionar] = useState(false);
   const [candidatoSelecionado, setCandidatoSelecionado] = useState<Candidato | null>(null);
   const porPagina = 8;
@@ -81,12 +80,6 @@ export default function TalentosPage() {
 
   const totalPaginas = Math.max(1, Math.ceil(filtrados.length / porPagina));
   const visivel = filtrados.slice((pagina - 1) * porPagina, pagina * porPagina);
-  const todosSelecionados = visivel.length > 0 && visivel.every((c) => selecionados.includes(c.id));
-
-  const toggleTodos = () => {
-    if (todosSelecionados) setSelecionados((sel) => sel.filter((id) => !visivel.find((c) => c.id === id)));
-    else setSelecionados((sel) => Array.from(new Set([...sel, ...visivel.map((c) => c.id)])));
-  };
 
   if (carregando) {
     return (
@@ -138,14 +131,6 @@ export default function TalentosPage() {
             <option value="pretensao_salarial">Maior pretensão salarial</option>
           </Select>
         </div>
-        {selecionados.length > 0 && (
-          <div className="tm-flex tm-items-center tm-gap-3" style={{ marginTop: 12, padding: "8px 12px", background: "var(--color-primary-soft)", borderRadius: 8 }}>
-            <strong>{selecionados.length}</strong> selecionados
-            <Button size="sm" variant="secondary">Mover etapa</Button>
-            <Button size="sm" variant="secondary">Adicionar tag</Button>
-            <Button size="sm" variant="ghost" onClick={() => setSelecionados([])}>Limpar</Button>
-          </div>
-        )}
       </div>
 
       <div className="tm-table-wrap">
@@ -155,9 +140,6 @@ export default function TalentosPage() {
           <table className="tm-table tm-table-clickable">
             <thead>
               <tr>
-                <th style={{ width: 36 }}>
-                  <input type="checkbox" className="tm-checkbox" checked={todosSelecionados} onChange={toggleTodos} onClick={(e) => e.stopPropagation()} />
-                </th>
                 <th>Candidato</th>
                 <th>Cargo pretendido</th>
                 <th>Senioridade</th>
@@ -171,13 +153,6 @@ export default function TalentosPage() {
             <tbody>
               {visivel.map((c) => (
                 <tr key={c.id} onClick={() => setCandidatoSelecionado(c)}>
-                  <td onClick={(e) => e.stopPropagation()}>
-                    <input
-                      type="checkbox" className="tm-checkbox"
-                      checked={selecionados.includes(c.id)}
-                      onChange={() => setSelecionados((sel) => sel.includes(c.id) ? sel.filter((x) => x !== c.id) : [...sel, c.id])}
-                    />
-                  </td>
                   <td>
                     <div className="tm-flex tm-items-center tm-gap-3">
                       <Avatar nome={c.nome} />
