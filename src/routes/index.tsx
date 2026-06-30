@@ -10,6 +10,7 @@ import { pipelineStages, statusLabel, senioridadeLabel } from "@/data/pipeline";
 import { StatsCard } from "@/components/common/StatsCard";
 import { Timeline } from "@/components/common/Timeline";
 import { Skeleton } from "@/components/common/Skeleton";
+import { useIsMobile } from "@/hooks/use-mobile";
 import type { TimelineEvento } from "@/types";
 
 const tipoEntrevistaLabel: Record<string, string> = {
@@ -39,10 +40,22 @@ function agruparPorMes(datas: string[]): { mes: string; quantidade: number }[] {
   }));
 }
 
+const ETAPA_ABREV: Record<string, string> = {
+  novo: "Novo",
+  triagem: "Triagem",
+  primeiro_contato: "1º Contato",
+  entrevista_rh: "Entrev. RH",
+  entrevista_tecnica: "Entrev. Téc.",
+  proposta: "Proposta",
+  contratado: "Contratado",
+  arquivado: "Arquivado",
+};
+
 export default function DashboardPage() {
   const [candidatos, setCandidatos] = useState<Candidato[]>([]);
   const [entrevistas, setEntrevistas] = useState<Entrevista[]>([]);
   const [carregando, setCarregando] = useState(true);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     Promise.all([listCandidatos(), listEntrevistas()])
@@ -64,6 +77,7 @@ export default function DashboardPage() {
       novosCandidatos: candidatos.filter((c) => c.status === "novo").length,
       distribuicaoEtapa: pipelineStages.map((s) => ({
         etapa: statusLabel[s.id],
+        etapaAbrev: ETAPA_ABREV[s.id] ?? statusLabel[s.id],
         quantidade: candidatos.filter((c) => c.status === s.id).length,
       })),
       contratacoesPorMes: agruparPorMes(contratados.map((c) => c.updated_at)),
@@ -115,7 +129,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="tm-grid-stats" style={{ marginBottom: 24 }}>
+      <div className="tm-grid-stats" style={{ marginBottom: 24, gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : undefined }}>
         <StatsCard label="Total de candidatos" valor={metricas.totalCandidatos} icone={<Users size={18} />} />
         <StatsCard label="Entrevistas agendadas" valor={metricas.entrevistasAgendadas} icone={<CalendarDays size={18} />} acentoCor="var(--color-info)" />
         <StatsCard label="Em processo" valor={metricas.emProcesso} icone={<Briefcase size={18} />} acentoCor="var(--color-warning)" />
@@ -126,25 +140,31 @@ export default function DashboardPage() {
       <div className="tm-grid-2" style={{ marginBottom: 24 }}>
         <div className="tm-card tm-card-pad">
           <h3 className="tm-h2" style={{ marginBottom: 12 }}>Distribuição por etapa</h3>
-          <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={metricas.distribuicaoEtapa}>
+          <ResponsiveContainer width="100%" height={isMobile ? 220 : 260}>
+            <BarChart data={metricas.distribuicaoEtapa} margin={{ bottom: isMobile ? 8 : 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
-              <XAxis dataKey="etapa" tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }} interval={0} angle={-20} textAnchor="end" height={70} />
-              <YAxis tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }} />
-              <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid var(--color-border)" }} />
+              <XAxis
+                dataKey={isMobile ? "etapaAbrev" : "etapa"}
+                tick={{ fontSize: isMobile ? 10 : 11, fill: "var(--color-muted-foreground)" }}
+                interval={0}
+                angle={isMobile ? -35 : -20}
+                textAnchor="end"
+                height={isMobile ? 56 : 70}
+              />
+              <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid var(--color-border)", fontSize: 13 }} />
               <Bar dataKey="quantidade" fill="var(--color-primary)" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
         <div className="tm-card tm-card-pad">
           <h3 className="tm-h2" style={{ marginBottom: 12 }}>Contratações por mês</h3>
-          <ResponsiveContainer width="100%" height={260}>
+          <ResponsiveContainer width="100%" height={isMobile ? 220 : 260}>
             <LineChart data={metricas.contratacoesPorMes}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
-              <XAxis dataKey="mes" tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }} />
-              <YAxis tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }} />
-              <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid var(--color-border)" }} />
-              <Line type="monotone" dataKey="quantidade" stroke="var(--color-primary)" strokeWidth={2.5} dot={{ r: 4, fill: "var(--color-primary)" }} />
+              <XAxis dataKey="mes" tick={{ fontSize: isMobile ? 10 : 11, fill: "var(--color-muted-foreground)" }} />
+              <YAxis tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }} width={28} />
+              <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid var(--color-border)", fontSize: 13 }} />
+              <Line type="monotone" dataKey="quantidade" stroke="var(--color-primary)" strokeWidth={2.5} dot={{ r: isMobile ? 3 : 4, fill: "var(--color-primary)" }} />
             </LineChart>
           </ResponsiveContainer>
         </div>

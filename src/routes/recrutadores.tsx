@@ -100,7 +100,8 @@ export default function RecrutadoresPage() {
         <Button icon={<Plus size={16} />} onClick={abrirNovo}>Novo recrutador</Button>
       </div>
 
-      <div className="tm-table-wrap">
+      {/* Tabela — desktop */}
+      <div className="tm-table-wrap tm-hide-mobile">
         <table className="tm-table">
           <thead>
             <tr>
@@ -125,6 +126,34 @@ export default function RecrutadoresPage() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Cards — mobile */}
+      <div className="tm-recrutador-cards tm-hide-desktop">
+        {recrutadores.map((r) => (
+          <div key={r.id} className="tm-recrutador-card">
+            <div className="tm-recrutador-card-header">
+              <div className="tm-flex tm-items-center tm-gap-3">
+                <Avatar nome={r.nome} />
+                <div>
+                  <div style={{ fontWeight: 600 }}>{r.nome}</div>
+                  {r.cargo && <div className="tm-muted" style={{ fontSize: 12 }}>{r.cargo}</div>}
+                </div>
+              </div>
+              <div className="tm-flex tm-items-center tm-gap-1">
+                {r.status === "ativo"
+                  ? <Badge variant="success" dot>Ativo</Badge>
+                  : <Badge variant="neutral" dot>Inativo</Badge>}
+                <Button variant="ghost" size="sm" iconOnly icon={<Pencil size={14} />} onClick={() => abrirEditar(r)} />
+                <Button variant="ghost" size="sm" iconOnly icon={<Trash2 size={14} />} onClick={() => setConfirmExcluir(r)} />
+              </div>
+            </div>
+            <div className="tm-recrutador-card-info">
+              <span className="tm-muted tm-flex tm-items-center tm-gap-2"><Mail size={13} />{r.email}</span>
+              {r.telefone && <span className="tm-muted tm-flex tm-items-center tm-gap-2"><Phone size={13} />{r.telefone}</span>}
+            </div>
+          </div>
+        ))}
       </div>
 
       <Modal

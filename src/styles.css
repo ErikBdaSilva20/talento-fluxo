@@ -526,6 +526,43 @@
   }
 }
 
+/* ===== Responsividade: visibilidade ===== */
+@media (max-width: 640px) {
+  .tm-hide-mobile { display: none !important; }
+}
+@media (min-width: 641px) {
+  .tm-hide-desktop { display: none !important; }
+}
+
+/* ===== Recrutadores: cards mobile ===== */
+.tm-recrutador-cards { display: flex; flex-direction: column; gap: 0.75rem; }
+.tm-recrutador-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  display: flex; flex-direction: column; gap: 0.5rem;
+}
+.tm-recrutador-card-header {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+}
+.tm-recrutador-card-info {
+  display: flex; flex-direction: column; gap: 0.25rem; font-size: 13px;
+}
+
+/* ===== Avaliacoes: cards mobile ===== */
+.tm-avaliacao-cards { display: flex; flex-direction: column; gap: 0.75rem; }
+.tm-avaliacao-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  display: flex; flex-direction: column; gap: 0.5rem;
+}
+.tm-avaliacao-card-header {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+}
+
 /* Animação suave fade-in */
 @keyframes tm-fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 .tm-fade-in { animation: tm-fade-in .25s ease-out; }
