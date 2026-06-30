@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, CalendarDays } from "lucide-react";
 import {
   DndContext,
   MouseSensor,
@@ -17,6 +17,7 @@ import { Badge } from "@/components/common/Badge";
 import { Button } from "@/components/common/Button";
 import { Skeleton } from "@/components/common/Skeleton";
 import { AddCandidateModal } from "@/components/common/AddCandidateModal";
+import { AddEntrevistaModal } from "@/components/common/AddEntrevistaModal";
 import { StatusBtn } from "@/components/common/StatusBtn";
 import { senioridadeLabel } from "@/data/pipeline";
 import { MapPin } from "lucide-react";
@@ -34,7 +35,7 @@ function DroppableCol({ id, children }: { id: string; children: React.ReactNode 
   );
 }
 
-function DraggableCard({ candidato, onStatusChange }: { candidato: Candidato; onStatusChange: () => void }) {
+function DraggableCard({ candidato, onStatusChange, onAgendar }: { candidato: Candidato; onStatusChange: () => void; onAgendar: (c: Candidato) => void }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: candidato.id });
   return (
     <div
@@ -58,13 +59,29 @@ function DraggableCard({ candidato, onStatusChange }: { candidato: Candidato; on
           </div>
         </div>
       </div>
-      <div className="tm-flex tm-gap-2 tm-items-center" style={{ fontSize: 12 }}>
-        {candidato.senioridade && (
-          <Badge variant="primary">{senioridadeLabel[candidato.senioridade] ?? candidato.senioridade}</Badge>
-        )}
-        {candidato.cidade && (
-          <span className="tm-muted tm-flex tm-items-center tm-gap-1"><MapPin size={11} />{candidato.cidade}</span>
-        )}
+      <div className="tm-flex tm-items-center tm-justify-between" style={{ fontSize: 12 }}>
+        <div className="tm-flex tm-gap-2 tm-items-center">
+          {candidato.senioridade && (
+            <Badge variant="primary">{senioridadeLabel[candidato.senioridade] ?? candidato.senioridade}</Badge>
+          )}
+          {candidato.cidade && (
+            <span className="tm-muted tm-flex tm-items-center tm-gap-1"><MapPin size={11} />{candidato.cidade}</span>
+          )}
+        </div>
+        <div onPointerDown={(e) => e.stopPropagation()}>
+          <button
+            onClick={() => onAgendar(candidato)}
+            title="Agendar entrevista"
+            style={{
+              display: "inline-flex", alignItems: "center", justifyContent: "center",
+              width: 26, height: 26, borderRadius: 6, border: "1px solid var(--color-border)",
+              background: "var(--color-card)", cursor: "pointer", color: "var(--color-muted-foreground)",
+              flexShrink: 0,
+            }}
+          >
+            <CalendarDays size={13} />
+          </button>
+        </div>
       </div>
       {candidato.status === "proposta" && (
         <div onPointerDown={(e) => e.stopPropagation()} style={{ marginTop: 8, paddingTop: 8, borderTop: "1px solid var(--color-border)" }}>
@@ -82,6 +99,7 @@ export default function PipelinePage() {
   const [candidatos, setCandidatos] = useState<Candidato[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [modalAdicionar, setModalAdicionar] = useState(false);
+  const [candidatoEntrevista, setCandidatoEntrevista] = useState<Candidato | null>(null);
 
   const mouseSensor = useSensor(MouseSensor, { activationConstraint: { distance: 5 } });
   const touchSensor = useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } });
@@ -148,7 +166,7 @@ export default function PipelinePage() {
                   </div>
                 </div>
                 <div className="tm-flex tm-flex-col tm-gap-2">
-                  {cards.map((c) => <DraggableCard key={c.id} candidato={c} onStatusChange={recarregarCandidatos} />)}
+                  {cards.map((c) => <DraggableCard key={c.id} candidato={c} onStatusChange={recarregarCandidatos} onAgendar={setCandidatoEntrevista} />)}
                   {cards.length === 0 && (
                     <div className="tm-muted" style={{ fontSize: 12, textAlign: "center", padding: "1rem", border: "1px dashed var(--color-border)", borderRadius: 8 }}>
                       Solte aqui
@@ -165,6 +183,13 @@ export default function PipelinePage() {
         aberto={modalAdicionar}
         onFechar={() => setModalAdicionar(false)}
         onCriado={setCandidatos}
+      />
+
+      <AddEntrevistaModal
+        aberto={!!candidatoEntrevista}
+        onFechar={() => setCandidatoEntrevista(null)}
+        onCriada={() => {}}
+        candidato={candidatoEntrevista ?? undefined}
       />
     </div>
   );
